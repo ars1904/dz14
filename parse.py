@@ -1,6 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
 import pprint
+from csv import DictWriter
 
 def parse():
     domain = 'https://pythondigest.ru/'
@@ -11,6 +12,10 @@ def parse():
 
     result = {}
     news_a = soup.find_all('a', class_='issue-item-title')
+
+    with open('base.csv', mode='w', encoding='utf8') as f:
+        pass
+
     for one_news_a in news_a:
         text = one_news_a.text
         href = one_news_a.get('href')
@@ -28,6 +33,11 @@ def parse():
             tit = titles.get_text()
 
             # добавим в словарь
-        result[text] ={'дата':txt,'заголовок': tit}
+        result[text] ={'дата':txt,'заголовок': tit, 'ссылка': href}
+
+        with open('base.csv', mode='a', encoding='utf8') as f:
+            tt = DictWriter(f, fieldnames=['дата', 'заголовок', 'ссылка'], delimiter=';')
+            #tt.writeheader()
+            tt.writerow({'дата':txt,'заголовок': tit, 'ссылка': href})
 
     return result
